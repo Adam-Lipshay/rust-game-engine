@@ -1,10 +1,11 @@
 use crate::core;
 use sdl2::{keyboard::Scancode, mouse::MouseButton};
 
-use super::{mesh, vector3f::Vector3f, vertex::Vertex};
+use super::{mesh, resource_loader, shader, vector3f::Vector3f, vertex::Vertex};
 
 pub struct Game {
     mesh: mesh::Mesh,
+    shader: shader::Shader,
 }
 
 impl Game {
@@ -16,8 +17,15 @@ impl Game {
                                      Vertex::new(Vector3f::new(1.0, -1.0, 0.0))];
 
         mesh.add_vertices(gl, data);
+
+        let shader = shader::Shader::new(gl);
+
+        shader.add_vertex_shader(resource_loader::load_shader("basic_vertex.glsl"), gl);
+        shader.add_fragment_shader(resource_loader::load_shader("basic_fragment.glsl"), gl);
+        shader.compile_shader(gl);
         Game {
             mesh,
+            shader,
         }
     }
 
@@ -44,6 +52,7 @@ impl Game {
     }
 
     pub fn render(&mut self, gl: &glow::Context) {
+        self.shader.bind_progam(gl);
         self.mesh.draw(gl);
     }
 }

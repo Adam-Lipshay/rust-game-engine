@@ -1,4 +1,6 @@
 use sdl2;
+
+#[allow(dead_code)]
 mod core;
 
 fn main() {

@@ -10,12 +10,14 @@ pub struct Window {
 
 impl Window {
     pub fn new(sdl_context: &Sdl, width: u32, height: u32, title: &str, fullscreen: bool) -> (glow::Context, Window) {
+        sdl2::hint::set("SDL_RENDER_VSYNC_DISPLAY", "0");
+        sdl2::hint::set("vsync", "0");
         let video_subsystem = sdl_context.video().unwrap();
         let gl_attr = video_subsystem.gl_attr();
         gl_attr.set_context_profile(GLProfile::Core);
         //gl_attr.set_context_version(3, 1);
 
-        //video_subsystem.gl_set_swap_interval(0);
+        video_subsystem.gl_set_swap_interval(0);
 
         let mut window = video_subsystem.window(&title, width, height)
             .position_centered()

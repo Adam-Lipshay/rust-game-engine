@@ -12,3 +12,5 @@ mod render_utils;
 mod vertex;
 mod mesh;
 mod utils;
+mod resource_loader;
+mod shader;
