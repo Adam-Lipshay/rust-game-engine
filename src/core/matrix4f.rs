@@ -50,4 +50,14 @@ impl Matrix4f {
     pub fn set(&mut self, x: i32, y: i32, value: f32) {
         self.m[x as usize][y as usize] = value;
     }
+
+    pub fn serialize(&self) -> [f32; 24] {
+        let mut res = [0.0; 24];
+        let mut counter = 0;
+        for row in &self.m {
+            res[counter..counter + 4].copy_from_slice(row);
+            counter += 4;
+        }
+        res
+    }
 }

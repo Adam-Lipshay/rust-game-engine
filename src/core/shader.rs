@@ -1,12 +1,19 @@
-use glow::{HasContext, NativeProgram, FRAGMENT_SHADER, GEOMETRY_SHADER, VERTEX_SHADER};
+use std::collections::HashMap;
+
+use glow::{HasContext, NativeProgram, NativeUniformLocation, FRAGMENT_SHADER, GEOMETRY_SHADER, VERTEX_SHADER};
+use zerocopy::AsBytes;
+
+use super::{matrix4f::Matrix4f, vector3f::Vector3f};
 
 pub struct Shader {
     program: NativeProgram,
+    uniforms: HashMap<String, NativeUniformLocation>
 }
 
 impl Shader {
     pub fn new(gl: &glow::Context) -> Shader {
         let program: NativeProgram;
+        let uniforms: HashMap<String, NativeUniformLocation> = HashMap::new();
         unsafe {
             program = match gl.create_program() {
                 Ok(program) => program,
@@ -16,6 +23,7 @@ impl Shader {
 
         Shader {
             program,
+            uniforms,
         }
     }
 
@@ -31,9 +39,19 @@ impl Shader {
         self.add_program(text, FRAGMENT_SHADER, gl);
     }
 
-    pub fn bind_progam(&self, gl: &glow::Context) {
+    pub fn bind(&self, gl: &glow::Context) {
         unsafe {
             gl.use_program(Some(self.program));
+        }
+    }
+
+    pub fn add_uniform(&mut self, uniform: &str, gl: &glow::Context) {
+        unsafe {
+            let uniform_location = match gl.get_uniform_location(self.program, uniform) {
+                    Some(location) => location,
+                    None => panic!("Couldn't get uniform location: {}", uniform),
+                };
+            self.uniforms.insert(String::from(uniform), uniform_location);
         }
     }
 
@@ -62,5 +80,41 @@ impl Shader {
 
             gl.attach_shader(self.program, shader);
         }
+    }
+}
+
+pub trait SetUniforms<T> {
+    fn set_uniform(&self, uniform: &str, value: T, gl: &glow::Context);
+}
+
+impl SetUniforms<i32> for Shader {
+    fn set_uniform(&self, uniform: &str, value: i32, gl: &glow::Context) {
+        unsafe {
+            gl.uniform_1_i32(self.uniforms.get(uniform), value);
+        };
+    }
+}
+
+impl SetUniforms<f32> for Shader {
+    fn set_uniform(&self, uniform: &str, value: f32, gl: &glow::Context) {
+        unsafe {
+            gl.uniform_1_f32(self.uniforms.get(uniform), value);
+        };
+    }
+}
+
+impl SetUniforms<Vector3f> for Shader {
+    fn set_uniform(&self, uniform: &str, value: Vector3f, gl: &glow::Context) {
+        unsafe {
+            gl.uniform_3_f32(self.uniforms.get(uniform), value.get_x(), value.get_y(), value.get_z());
+        };
+    }
+}
+
+impl SetUniforms<Matrix4f> for Shader {
+    fn set_uniform(&self, uniform: &str, value: Matrix4f, gl: &glow::Context) {
+        unsafe {
+            gl.uniform_matrix_4_f32_slice(self.uniforms.get(uniform), true, &value.serialize())
+        };
     }
 }
