@@ -25,7 +25,6 @@ impl Mesh {
         self.size = vertices.len() as i32;
 
         let bytes = utils::vertices_to_bytes(vertices);
-        let bytes = dbg!(bytes);
 
         unsafe{
             gl.bind_buffer(ARRAY_BUFFER, self.buffer);
