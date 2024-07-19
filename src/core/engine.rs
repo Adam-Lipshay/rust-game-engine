@@ -5,27 +5,25 @@ use super::render_utils;
 
 const FRAME_CAP: f64 = 1000.0;
 
-pub struct Engine {
+pub struct Engine<'a> {
     is_running: bool,
     window: core::window::Window,
-    gl: glow::Context,
+    gl: &'a glow::Context,
     events: core::events::EventHandler,
     time: core::time::Time,
-    game: core::game::Game,
+    game: core::game::Game<'a>,
     input: core::input::Input,
 }
 
-impl Engine {
-    pub fn new(sdl_context: &sdl2::Sdl) -> Engine {
+impl<'a> Engine<'a> {
+    pub fn new(sdl_context: &sdl2::Sdl, window: core::window::Window, gl: &'a glow::Context) -> Engine<'a> {
         let mut event_handler = core::events::EventHandler::new(&sdl_context);
-        let (gl, window) = core::window::Window::new(&sdl_context, 800, 600, "test", false);
-
-        render_utils::init_graphics(&gl);
-        println!("{}", render_utils::get_opengl_version(&gl));
+        render_utils::init_graphics(gl);
+        println!("{}", render_utils::get_opengl_version(gl));
 
         Engine {
             is_running: false,
-            game: core::game::Game::new(&gl),
+            game: core::game::Game::new(gl),
             window,
             gl,
             input: core::input::Input::new(event_handler.get_event_pump()),
@@ -105,8 +103,8 @@ impl Engine {
     }
 
     fn render(&mut self) {
-        render_utils::clear_screen(&self.gl);
-        self.game.render(&self.gl);
+        render_utils::clear_screen(self.gl);
+        self.game.render();
         self.window.render();
     }
 }

@@ -1,6 +1,7 @@
 pub mod engine;
+pub mod window;
+
 mod events;
-mod window;
 mod time;
 mod game;
 mod input;

@@ -5,7 +5,10 @@ mod core;
 
 fn main() {
     let sdl_context = sdl2::init().unwrap();
-    let mut engine = core::engine::Engine::new(&sdl_context);
+    let gl: glow::Context;
+    let mut window: core::window::Window;
+    (gl, window) = core::window::Window::new(&sdl_context, 800, 600, "test", false);
+    let mut engine = core::engine::Engine::new(&sdl_context, window, &gl);
 
     engine.start();
 }
