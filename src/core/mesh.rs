@@ -5,18 +5,18 @@ use super::utils;
 
 pub struct Mesh {
     buffer: Option<glow::Buffer>,
+    vao: Option<glow::VertexArray>,
     size: i32,
 }
 
 impl Mesh {
     pub fn new(gl: &glow::Context) -> Mesh {
-        let buffer: Option<glow::Buffer>;
-        unsafe {
-            buffer = gl.create_buffer().ok();
-        }
+        let buffer = unsafe { gl.create_buffer().ok() };
+        let vao = unsafe { gl.create_vertex_array().ok() };
 
         Mesh {
             buffer,
+            vao,
             size: 0,
         }
     }
@@ -27,6 +27,7 @@ impl Mesh {
         let bytes = utils::vertices_to_bytes(vertices);
 
         unsafe{
+            gl.bind_vertex_array(self.vao);
             gl.bind_buffer(ARRAY_BUFFER, self.buffer);
             gl.buffer_data_u8_slice(ARRAY_BUFFER, &bytes, STATIC_DRAW);
         }
