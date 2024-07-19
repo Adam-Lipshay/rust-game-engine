@@ -2,6 +2,10 @@ use super::vector3f::Vector3f;
 
 pub const SIZE: i32 = 3;
 
+use zerocopy::AsBytes;
+
+#[derive(zerocopy::AsBytes)]
+#[repr(C)]
 pub struct Vertex {
     pos: Vector3f,
 }

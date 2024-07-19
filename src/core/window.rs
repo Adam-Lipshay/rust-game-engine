@@ -13,7 +13,7 @@ impl Window {
         let video_subsystem = sdl_context.video().unwrap();
         let gl_attr = video_subsystem.gl_attr();
         gl_attr.set_context_profile(GLProfile::Core);
-        gl_attr.set_context_version(3, 1);
+        //gl_attr.set_context_version(3, 1);
 
         //video_subsystem.gl_set_swap_interval(0);
 

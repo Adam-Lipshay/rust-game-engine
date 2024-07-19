@@ -1,4 +1,7 @@
-#[derive(Copy, Clone)]
+use zerocopy::AsBytes;
+
+#[derive(Copy, Clone, AsBytes)]
+#[repr(C)]
 pub struct Vector2f {
     x: f32,
     y: f32,

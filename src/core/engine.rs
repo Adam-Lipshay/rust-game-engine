@@ -21,6 +21,7 @@ impl Engine {
         let (gl, window) = core::window::Window::new(&sdl_context, 800, 600, "test", false);
 
         render_utils::init_graphics(&gl);
+        println!("{}", render_utils::get_opengl_version(&gl));
 
         Engine {
             is_running: false,

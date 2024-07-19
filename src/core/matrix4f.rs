@@ -1,4 +1,7 @@
-#[derive(Copy, Clone)]
+use zerocopy::AsBytes;
+
+#[derive(Copy, Clone, AsBytes)]
+#[repr(C)]
 pub struct Matrix4f {
     m: [[f32; 4]; 4],
 }
