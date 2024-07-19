@@ -25,10 +25,11 @@ impl Mesh {
         self.size = vertices.len() as i32;
 
         let bytes = utils::vertices_to_byte_slice(vertices);
+        let bytes = dbg!(bytes);
 
         unsafe{
             gl.bind_buffer(ARRAY_BUFFER, self.buffer);
-            gl.buffer_data_u8_slice(ARRAY_BUFFER, bytes, STATIC_DRAW);
+            gl.buffer_data_u8_slice(ARRAY_BUFFER, &bytes, STATIC_DRAW);
         }
     }
 

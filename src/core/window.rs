@@ -15,6 +15,8 @@ impl Window {
         gl_attr.set_context_profile(GLProfile::Core);
         gl_attr.set_context_version(3, 1);
 
+        //video_subsystem.gl_set_swap_interval(0);
+
         let mut window = video_subsystem.window(&title, width, height)
             .position_centered()
             .opengl()
