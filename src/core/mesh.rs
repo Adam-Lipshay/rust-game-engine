@@ -24,7 +24,7 @@ impl Mesh {
     pub fn add_vertices(&mut self, gl: &glow::Context, vertices: Vec<Vertex>) {
         self.size = vertices.len() as i32;
 
-        let bytes = utils::vertices_to_byte_slice(vertices);
+        let bytes = utils::vertices_to_bytes(vertices);
         let bytes = dbg!(bytes);
 
         unsafe{
