@@ -55,7 +55,7 @@ impl Vector2f {
     }
 
     pub fn rotate(&self, angle: f32) -> Vector2f {
-        let rad = angle as f64 * std::f64::consts::PI / 180 as f64;
+        let rad = angle.to_radians() as f64;
         let cos = rad.cos();
         let sin = rad.sin();
 

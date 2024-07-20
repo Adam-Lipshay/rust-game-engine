@@ -1,10 +1,12 @@
 use crate::core;
 use sdl2::{keyboard::Scancode, mouse::MouseButton};
 
-use super::{mesh, resource_loader, shader::{self, SetUniforms}, vector3f::Vector3f, vertex::Vertex};
+use super::{mesh, resource_loader, shader::{self, SetUniforms}, time, transform::{self, transformation_setters}, vector3f::Vector3f, vertex::Vertex};
 
 pub struct Game<'a> {
     gl: &'a glow::Context,
+    temp: f32,
+    transform: transform::Transform,
     mesh: mesh::Mesh<'a>,
     shader: shader::Shader<'a>,
 }
@@ -25,9 +27,11 @@ impl<'a> Game<'a> {
         shader.add_fragment_shader(resource_loader::load_shader("basic_fragment.glsl"));
         shader.compile_shader();
 
-        shader.add_uniform("uniformFloat");
+        shader.add_uniform("transform");
         Game {
             gl,
+            temp: 0.0,
+            transform: transform::Transform::new(),
             mesh,
             shader,
         }
@@ -51,12 +55,17 @@ impl<'a> Game<'a> {
         }
     }
 
-    pub fn update(&mut self, gl: &glow::Context) {
-        self.shader.set_uniform("uniformFloat", 1.0);
+    pub fn update(&mut self, time: &time::Time) {
+        self.temp += time.get_delta() as f32;
+        let temp_sin = self.temp.sin();
+        self.transform.set_translation((temp_sin,0.0,0.0));
+        self.transform.set_rotation((0.0,0.0,temp_sin * 180.0));
+        self.transform.set_scale((temp_sin,temp_sin,temp_sin));
     }
 
     pub fn render(&mut self) {
         self.shader.bind();
+        self.shader.set_uniform("transform", self.transform.get_transformation());
         self.mesh.draw();
     }
 }

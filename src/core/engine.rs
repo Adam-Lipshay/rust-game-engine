@@ -84,7 +84,7 @@ impl<'a> Engine<'a> {
                 self.time.set_delta(FRAME_TIME);
 
                 self.game.input(&mut self.input);
-                self.game.update(&self.gl);
+                self.game.update(&self.time);
 
                 if frames_counter >= core::time::SECOND {
                     println!("{}", frames);
