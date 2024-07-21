@@ -1,17 +1,19 @@
-use super::{matrix4f::Matrix4f, vector3f::Vector3f};
+use super::{matrix4f::Matrix4f, projection, vector3f::Vector3f};
 
-pub struct Transform {
+pub struct Transform<'a> {
     translation: Vector3f,
     rotation: Vector3f,
     scale: Vector3f,
+    proj: &'a projection::Projection,
 }
 
-impl Transform {
-    pub fn new() -> Transform {
+impl<'a> Transform<'a> {
+    pub fn new(proj: &'a projection::Projection) -> Transform<'a> {
         Transform {
             translation: Vector3f::new(0.0, 0.0, 0.0),
             rotation: Vector3f::new(0.0, 0.0, 0.0),
             scale: Vector3f::new(1.0, 1.0, 1.0),
+            proj,
         }
     }
 
@@ -45,6 +47,19 @@ impl Transform {
 
         translation_matrix.mul(rotation_matrix.mul(scale_matrix))
     }
+
+    pub fn get_projection_transformation(&self) -> Matrix4f {
+        let mut projection_matrix = Matrix4f::new();
+        projection_matrix.init_projection(
+            self.proj.get_fov(),
+            self.proj.get_width(),
+            self.proj.get_height(),
+            self.proj.get_z_near(),
+            self.proj.get_z_far(),
+        );
+
+        projection_matrix.mul(self.get_transformation())
+    }
 }
 
 pub trait TransformationSetters<T> {
@@ -53,7 +68,7 @@ pub trait TransformationSetters<T> {
     fn set_scale(&mut self, scale: T);
 }
 
-impl TransformationSetters<Vector3f> for Transform {
+impl<'a> TransformationSetters<Vector3f> for Transform<'a> {
     fn set_translation(&mut self, translation: Vector3f) {
         self.translation = translation;
     }
@@ -67,7 +82,7 @@ impl TransformationSetters<Vector3f> for Transform {
     }
 }
 
-impl TransformationSetters<(f32, f32, f32)> for Transform {
+impl<'a> TransformationSetters<(f32, f32, f32)> for Transform<'a> {
     fn set_translation(&mut self, translation: (f32, f32, f32)) {
         self.translation = Vector3f::new(translation.0, translation.1, translation.2);
     }

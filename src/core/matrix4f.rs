@@ -75,7 +75,14 @@ impl Matrix4f {
         self
     }
 
-    pub fn init_projection(&mut self, fov: f32, width: f32, height: f32, z_near: f32, z_far: f32) -> &mut Matrix4f {
+    pub fn init_projection(
+        &mut self,
+        fov: f32,
+        width: f32,
+        height: f32,
+        z_near: f32,
+        z_far: f32,
+    ) -> &mut Matrix4f {
         self.m = [[0.0; 4]; 4];
 
         let aspect_ratio = width / height;

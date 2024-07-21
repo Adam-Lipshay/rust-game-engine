@@ -2,14 +2,17 @@ use crate::core;
 use sdl2::{keyboard::Scancode, mouse::MouseButton};
 
 use super::{
-    mesh, projection, resource_loader, shader::{self, SetUniforms}, time, transform::{self, TransformationSetters}
+    mesh, projection, resource_loader,
+    shader::{self, SetUniforms},
+    time,
+    transform::{self, TransformationSetters},
 };
 
 pub struct Game<'a> {
     gl: &'a glow::Context,
     proj: &'a projection::Projection,
     temp: f32,
-    transform: transform::Transform,
+    transform: transform::Transform<'a>,
     mesh: mesh::Mesh<'a>,
     shader: shader::Shader<'a>,
 }
@@ -42,7 +45,7 @@ impl<'a> Game<'a> {
             gl,
             proj,
             temp: 0.0,
-            transform: transform::Transform::new(),
+            transform: transform::Transform::new(proj),
             mesh,
             shader,
         }
@@ -81,7 +84,7 @@ impl<'a> Game<'a> {
     pub fn render(&mut self) {
         self.shader.bind();
         self.shader
-            .set_uniform("transform", self.proj.get_projection().mul(self.transform.get_transformation()));
+            .set_uniform("transform", self.transform.get_projection_transformation());
         self.mesh.draw();
     }
 }

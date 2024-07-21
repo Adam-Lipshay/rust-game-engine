@@ -15,13 +15,19 @@ impl Projection {
             width,
             height,
             z_near,
-            z_far
+            z_far,
         }
     }
 
     pub fn get_projection(&self) -> Matrix4f {
         let mut projection_matrix = Matrix4f::new();
-        projection_matrix.init_projection(self.fov, self.width, self.height, self.z_near, self.z_far);
+        projection_matrix.init_projection(
+            self.fov,
+            self.width,
+            self.height,
+            self.z_near,
+            self.z_far,
+        );
 
         projection_matrix
     }

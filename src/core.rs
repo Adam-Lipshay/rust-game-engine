@@ -1,6 +1,6 @@
 pub mod engine;
-pub mod window;
 pub mod projection;
+pub mod window;
 
 mod events;
 mod game;

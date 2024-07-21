@@ -21,7 +21,7 @@ impl<'a> Engine<'a> {
         sdl_context: &sdl2::Sdl,
         window: core::window::Window,
         gl: &'a glow::Context,
-        projection: &'a core::projection::Projection
+        projection: &'a core::projection::Projection,
     ) -> Engine<'a> {
         let mut event_handler = core::events::EventHandler::new(&sdl_context);
         render_utils::init_graphics(gl);
