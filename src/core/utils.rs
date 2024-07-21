@@ -14,3 +14,12 @@ pub fn vertices_to_bytes(vertices: Vec<Vertex>) -> Vec<u8> {
     // }
     data
 }
+
+pub fn indices_to_bytes(indices: Vec<i32>) -> Vec<u8> {
+    let mut data: Vec<u8> = vec![];
+    for index in indices {
+        data.extend(index.to_le_bytes());
+    }
+
+    data
+}

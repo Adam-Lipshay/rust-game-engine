@@ -2,9 +2,7 @@ use super::vector3f::Vector3f;
 
 pub const SIZE: i32 = 3;
 
-use zerocopy::AsBytes;
-
-#[derive(zerocopy::AsBytes)]
+#[derive(zerocopy::AsBytes, Debug)]
 #[repr(C)]
 pub struct Vertex {
     pos: Vector3f,
@@ -12,9 +10,7 @@ pub struct Vertex {
 
 impl Vertex {
     pub fn new(pos: Vector3f) -> Vertex {
-        Vertex {
-            pos,
-        }
+        Vertex { pos }
     }
 
     pub fn get_pos(&self) -> Vector3f {

@@ -1,5 +1,5 @@
-use sdl2::{EventPump, Sdl, event::Event};
 use crate::core;
+use sdl2::{event::Event, EventPump, Sdl};
 
 pub struct EventHandler {
     event_pump: EventPump,
@@ -15,25 +15,25 @@ impl EventHandler {
     }
 
     pub fn poll_events(&mut self, input: &mut core::input::Input) {
-        for event in self.event_pump.poll_iter(){
+        for event in self.event_pump.poll_iter() {
             match event {
-                Event::Quit {..} => {
+                Event::Quit { .. } => {
                     self.is_close_requested = true;
-                },
+                }
                 Event::KeyDown { scancode, .. } => {
                     input.set_down_key(scancode.unwrap(), true);
-                },
+                }
                 Event::KeyUp { scancode, .. } => {
                     input.set_down_key(scancode.unwrap(), false);
                     input.set_up_key(scancode.unwrap(), true);
-                },
-                Event::MouseButtonDown { mouse_btn, ..} => {
+                }
+                Event::MouseButtonDown { mouse_btn, .. } => {
                     input.set_mouse_button_down(mouse_btn, true);
-                },
-                Event::MouseButtonUp { mouse_btn, ..} => {
+                }
+                Event::MouseButtonUp { mouse_btn, .. } => {
                     input.set_mouse_button_down(mouse_btn, false);
                     input.set_mouse_button_up(mouse_btn, true);
-                },
+                }
                 _ => {}
             }
         }

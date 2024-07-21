@@ -1,6 +1,6 @@
 use zerocopy::AsBytes;
 
-#[derive(Copy, Clone, AsBytes)]
+#[derive(Copy, Clone, AsBytes, Debug)]
 #[repr(C)]
 pub struct Vector3f {
     x: f32,
@@ -10,11 +10,7 @@ pub struct Vector3f {
 
 impl Vector3f {
     pub fn new(x: f32, y: f32, z: f32) -> Vector3f {
-        Vector3f {
-            x,
-            y,
-            z,
-        }
+        Vector3f { x, y, z }
     }
 
     pub fn to_string(&self) -> String {
@@ -95,19 +91,35 @@ pub trait Math<T> {
 
 impl Math<Vector3f> for Vector3f {
     fn add(&self, vector: Vector3f) -> Vector3f {
-        Vector3f::new(self.x + vector.get_x(), self.y + vector.get_y(), self.z + vector.get_z())
+        Vector3f::new(
+            self.x + vector.get_x(),
+            self.y + vector.get_y(),
+            self.z + vector.get_z(),
+        )
     }
 
     fn sub(&self, vector: Vector3f) -> Vector3f {
-        Vector3f::new(self.x - vector.get_x(), self.y - vector.get_y(), self.z - vector.get_z())
+        Vector3f::new(
+            self.x - vector.get_x(),
+            self.y - vector.get_y(),
+            self.z - vector.get_z(),
+        )
     }
 
     fn mul(&self, vector: Vector3f) -> Vector3f {
-        Vector3f::new(self.x * vector.get_x(), self.y * vector.get_y(), self.z * vector.get_z())
+        Vector3f::new(
+            self.x * vector.get_x(),
+            self.y * vector.get_y(),
+            self.z * vector.get_z(),
+        )
     }
 
     fn div(&self, vector: Vector3f) -> Vector3f {
-        Vector3f::new(self.x / vector.get_x(), self.y / vector.get_y(), self.z / vector.get_z())
+        Vector3f::new(
+            self.x / vector.get_x(),
+            self.y / vector.get_y(),
+            self.z / vector.get_z(),
+        )
     }
 }
 

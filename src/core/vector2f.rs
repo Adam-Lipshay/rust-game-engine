@@ -9,10 +9,7 @@ pub struct Vector2f {
 
 impl Vector2f {
     pub fn new(x: f32, y: f32) -> Vector2f {
-        Vector2f {
-            x,
-            y,
-        }
+        Vector2f { x, y }
     }
 
     pub fn to_string(&self) -> String {
@@ -59,7 +56,10 @@ impl Vector2f {
         let cos = rad.cos();
         let sin = rad.sin();
 
-        Vector2f::new((self.x as f64 * cos - self.y as f64 * sin) as f32, (self.x as f64 * sin + self.y as f64 * cos) as f32)
+        Vector2f::new(
+            (self.x as f64 * cos - self.y as f64 * sin) as f32,
+            (self.x as f64 * sin + self.y as f64 * cos) as f32,
+        )
     }
 }
 

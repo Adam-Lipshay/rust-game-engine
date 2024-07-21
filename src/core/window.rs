@@ -1,6 +1,7 @@
-use sdl2::{Sdl, video::{GLProfile, GLContext}};
-
-use super::render_utils;
+use sdl2::{
+    video::{GLContext, GLProfile},
+    Sdl,
+};
 
 pub struct Window {
     video_subsystem: sdl2::VideoSubsystem,
@@ -9,7 +10,13 @@ pub struct Window {
 }
 
 impl Window {
-    pub fn new(sdl_context: &Sdl, width: u32, height: u32, title: &str, fullscreen: bool) -> (glow::Context, Window) {
+    pub fn new(
+        sdl_context: &Sdl,
+        width: u32,
+        height: u32,
+        title: &str,
+        fullscreen: bool,
+    ) -> (glow::Context, Window) {
         let video_subsystem = sdl_context.video().unwrap();
         let gl_attr = video_subsystem.gl_attr();
         gl_attr.set_context_profile(GLProfile::Core);
@@ -17,7 +24,8 @@ impl Window {
 
         //video_subsystem.gl_set_swap_interval(0);
 
-        let mut window = video_subsystem.window(&title, width, height)
+        let mut window = video_subsystem
+            .window(&title, width, height)
             .position_centered()
             .opengl()
             .build()
@@ -31,7 +39,9 @@ impl Window {
         window.gl_make_current(&_gl_context).unwrap();
         let gl: glow::Context;
         unsafe {
-            gl = glow::Context::from_loader_function(|s| video_subsystem.gl_get_proc_address(s) as *const _);
+            gl = glow::Context::from_loader_function(|s| {
+                video_subsystem.gl_get_proc_address(s) as *const _
+            });
         };
 
         let win = Window {

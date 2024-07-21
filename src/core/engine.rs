@@ -1,5 +1,5 @@
-use std::{thread, time::Duration};
 use crate::core;
+use std::{thread, time::Duration};
 
 use super::render_utils;
 
@@ -9,6 +9,7 @@ pub struct Engine<'a> {
     is_running: bool,
     window: core::window::Window,
     gl: &'a glow::Context,
+    projection: &'a core::projection::Projection,
     events: core::events::EventHandler,
     time: core::time::Time,
     game: core::game::Game<'a>,
@@ -16,16 +17,22 @@ pub struct Engine<'a> {
 }
 
 impl<'a> Engine<'a> {
-    pub fn new(sdl_context: &sdl2::Sdl, window: core::window::Window, gl: &'a glow::Context) -> Engine<'a> {
+    pub fn new(
+        sdl_context: &sdl2::Sdl,
+        window: core::window::Window,
+        gl: &'a glow::Context,
+        projection: &'a core::projection::Projection
+    ) -> Engine<'a> {
         let mut event_handler = core::events::EventHandler::new(&sdl_context);
         render_utils::init_graphics(gl);
         println!("{}", render_utils::get_opengl_version(gl));
 
         Engine {
             is_running: false,
-            game: core::game::Game::new(gl),
+            game: core::game::Game::new(gl, projection),
             window,
             gl,
+            projection,
             input: core::input::Input::new(event_handler.get_event_pump()),
             events: event_handler,
             time: core::time::Time::new(),
@@ -36,7 +43,6 @@ impl<'a> Engine<'a> {
         if self.is_running {
             return;
         }
-
 
         self.run();
     }

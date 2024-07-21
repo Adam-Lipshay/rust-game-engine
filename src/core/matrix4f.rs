@@ -8,9 +8,7 @@ pub struct Matrix4f {
 
 impl Matrix4f {
     pub fn new() -> Matrix4f {
-        Matrix4f {
-            m: [[0.0; 4]; 4],
-        }
+        Matrix4f { m: [[0.0; 4]; 4] }
     }
 
     pub fn init_identity(&mut self) -> &mut Matrix4f {
@@ -77,14 +75,34 @@ impl Matrix4f {
         self
     }
 
+    pub fn init_projection(&mut self, fov: f32, width: f32, height: f32, z_near: f32, z_far: f32) -> &mut Matrix4f {
+        self.m = [[0.0; 4]; 4];
+
+        let aspect_ratio = width / height;
+        let tan_half_fov = (fov / 2.0).to_radians().tan();
+        let z_range = z_near - z_far;
+
+        self.m[0][0] = 1.0 / (tan_half_fov * aspect_ratio);
+        self.m[1][1] = 1.0 / tan_half_fov;
+        self.m[2][2] = (-z_near - z_far) / z_range;
+        self.m[2][3] = 2.0 * z_near * z_far / z_range;
+        self.m[3][2] = 1.0;
+
+        self
+    }
+
     pub fn mul(&self, r: Matrix4f) -> Matrix4f {
         let mut res = Matrix4f::new();
         for i in 0..4 {
             for j in 0..4 {
-                res.set(i, j, self.m[i as usize][0] * r.get(0, j) +
-                              self.m[i as usize][1] * r.get(1, j) +
-                              self.m[i as usize][2] * r.get(2, j) +
-                              self.m[i as usize][3] * r.get(3, j));
+                res.set(
+                    i,
+                    j,
+                    self.m[i as usize][0] * r.get(0, j)
+                        + self.m[i as usize][1] * r.get(1, j)
+                        + self.m[i as usize][2] * r.get(2, j)
+                        + self.m[i as usize][3] * r.get(3, j),
+                );
             }
         }
 

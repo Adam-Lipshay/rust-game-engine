@@ -23,7 +23,7 @@ impl Time {
         self.delta
     }
 
-    pub fn set_delta(& mut self, delta: f64) {
+    pub fn set_delta(&mut self, delta: f64) {
         self.delta = delta;
     }
 }

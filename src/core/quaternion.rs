@@ -9,12 +9,7 @@ pub struct Quaternion {
 
 impl Quaternion {
     pub fn new(x: f32, y: f32, z: f32, w: f32) -> Quaternion {
-        Quaternion {
-            x,
-            y,
-            z,
-            w
-        }
+        Quaternion { x, y, z, w }
     }
 
     pub fn length(&self) -> f32 {
@@ -89,9 +84,9 @@ impl Math<Quaternion> for Quaternion {
 impl Math<Vector3f> for Quaternion {
     fn mul(&self, r: Vector3f) -> Quaternion {
         let w = -self.x * r.get_x() - self.y * r.get_y() - self.z * r.get_z();
-        let x =  self.w * r.get_x() + self.y * r.get_z() - self.z * r.get_y();
-        let y =  self.w * r.get_y() + self.z * r.get_x() - self.x * r.get_z();
-        let z =  self.w * r.get_z() + self.x * r.get_y() - self.y * r.get_x();
+        let x = self.w * r.get_x() + self.y * r.get_z() - self.z * r.get_y();
+        let y = self.w * r.get_y() + self.z * r.get_x() - self.x * r.get_z();
+        let z = self.w * r.get_z() + self.x * r.get_y() - self.y * r.get_x();
 
         Quaternion::new(x, y, z, w)
     }

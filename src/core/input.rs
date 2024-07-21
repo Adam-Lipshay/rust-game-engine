@@ -1,4 +1,8 @@
-use sdl2::{keyboard::Scancode, mouse::{MouseButton, MouseState}, EventPump};
+use sdl2::{
+    keyboard::Scancode,
+    mouse::{MouseButton, MouseState},
+    EventPump,
+};
 
 use super::vector2f::Vector2f;
 
