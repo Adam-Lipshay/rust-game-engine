@@ -9,7 +9,6 @@ pub struct Engine<'a> {
     is_running: bool,
     window: core::window::Window,
     gl: &'a glow::Context,
-    projection: &'a core::projection::Projection,
     events: core::events::EventHandler,
     time: core::time::Time,
     game: core::game::Game<'a>,
@@ -21,7 +20,6 @@ impl<'a> Engine<'a> {
         sdl_context: &sdl2::Sdl,
         window: core::window::Window,
         gl: &'a glow::Context,
-        projection: &'a core::projection::Projection,
     ) -> Engine<'a> {
         let mut event_handler = core::events::EventHandler::new(&sdl_context);
         render_utils::init_graphics(gl);
@@ -29,10 +27,9 @@ impl<'a> Engine<'a> {
 
         Engine {
             is_running: false,
-            game: core::game::Game::new(gl, projection),
+            game: core::game::Game::new(gl),
             window,
             gl,
-            projection,
             input: core::input::Input::new(event_handler.get_event_pump()),
             events: event_handler,
             time: core::time::Time::new(),

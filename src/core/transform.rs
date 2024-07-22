@@ -1,19 +1,25 @@
-use super::{matrix4f::Matrix4f, projection, vector3f::Vector3f};
+use crate::{INIT_HEIGHT, INIT_WIDTH};
 
-pub struct Transform<'a> {
+use super::{matrix4f::Matrix4f, vector3f::Vector3f};
+
+static mut FOV: f32 = 70.0;
+static mut WIDTH: f32 = INIT_WIDTH as f32;
+static mut HEIGHT: f32 = INIT_HEIGHT as f32;
+static mut Z_NEAR: f32 = 0.1;
+static mut Z_FAR: f32 = 1000.0;
+
+pub struct Transform {
     translation: Vector3f,
     rotation: Vector3f,
     scale: Vector3f,
-    proj: &'a projection::Projection,
 }
 
-impl<'a> Transform<'a> {
-    pub fn new(proj: &'a projection::Projection) -> Transform<'a> {
+impl Transform {
+    pub fn new() -> Transform {
         Transform {
             translation: Vector3f::new(0.0, 0.0, 0.0),
             rotation: Vector3f::new(0.0, 0.0, 0.0),
             scale: Vector3f::new(1.0, 1.0, 1.0),
-            proj,
         }
     }
 
@@ -50,15 +56,39 @@ impl<'a> Transform<'a> {
 
     pub fn get_projection_transformation(&self) -> Matrix4f {
         let mut projection_matrix = Matrix4f::new();
-        projection_matrix.init_projection(
-            self.proj.get_fov(),
-            self.proj.get_width(),
-            self.proj.get_height(),
-            self.proj.get_z_near(),
-            self.proj.get_z_far(),
-        );
+        unsafe {
+            projection_matrix.init_projection(FOV, WIDTH, HEIGHT, Z_NEAR, Z_FAR);
+        }
 
         projection_matrix.mul(self.get_transformation())
+    }
+
+    pub unsafe fn set_projection(fov: f32, width: f32, height: f32, z_near: f32, z_far: f32) {
+        FOV = fov;
+        WIDTH = width;
+        HEIGHT = height;
+        Z_NEAR = z_near;
+        Z_FAR = z_far;
+    }
+
+    pub unsafe fn get_fov(&self) -> f32 {
+        FOV
+    }
+
+    pub unsafe fn get_width(&self) -> f32 {
+        WIDTH
+    }
+
+    pub unsafe fn get_height(&self) -> f32 {
+        HEIGHT
+    }
+
+    pub unsafe fn get_z_near(&self) -> f32 {
+        Z_NEAR
+    }
+
+    pub unsafe fn get_z_far(&self) -> f32 {
+        Z_FAR
     }
 }
 
@@ -68,7 +98,7 @@ pub trait TransformationSetters<T> {
     fn set_scale(&mut self, scale: T);
 }
 
-impl<'a> TransformationSetters<Vector3f> for Transform<'a> {
+impl TransformationSetters<Vector3f> for Transform {
     fn set_translation(&mut self, translation: Vector3f) {
         self.translation = translation;
     }
@@ -82,7 +112,7 @@ impl<'a> TransformationSetters<Vector3f> for Transform<'a> {
     }
 }
 
-impl<'a> TransformationSetters<(f32, f32, f32)> for Transform<'a> {
+impl TransformationSetters<(f32, f32, f32)> for Transform {
     fn set_translation(&mut self, translation: (f32, f32, f32)) {
         self.translation = Vector3f::new(translation.0, translation.1, translation.2);
     }

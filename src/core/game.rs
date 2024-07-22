@@ -2,7 +2,7 @@ use crate::core;
 use sdl2::{keyboard::Scancode, mouse::MouseButton};
 
 use super::{
-    mesh, projection, resource_loader,
+    mesh, resource_loader,
     shader::{self, SetUniforms},
     time,
     transform::{self, TransformationSetters},
@@ -10,15 +10,14 @@ use super::{
 
 pub struct Game<'a> {
     gl: &'a glow::Context,
-    proj: &'a projection::Projection,
     temp: f32,
-    transform: transform::Transform<'a>,
+    transform: transform::Transform,
     mesh: mesh::Mesh<'a>,
     shader: shader::Shader<'a>,
 }
 
 impl<'a> Game<'a> {
-    pub fn new(gl: &'a glow::Context, proj: &'a projection::Projection) -> Game<'a> {
+    pub fn new(gl: &'a glow::Context) -> Game<'a> {
         // let mut mesh = core::mesh::Mesh::new(gl);
 
         // let vertices: Vec<Vertex> = vec![Vertex::new(Vector3f::new(-1.0, -1.0, 0.0)),
@@ -32,7 +31,7 @@ impl<'a> Game<'a> {
         //                              0, 2, 3];
 
         // mesh.add_vertices(vertices, indices);
-        let mesh = resource_loader::load_mesh("box.obj", gl);
+        let mesh = resource_loader::load_mesh("box.obj", gl).unwrap();
 
         let mut shader = shader::Shader::new(gl);
 
@@ -43,9 +42,8 @@ impl<'a> Game<'a> {
         shader.add_uniform("transform");
         Game {
             gl,
-            proj,
             temp: 0.0,
-            transform: transform::Transform::new(proj),
+            transform: transform::Transform::new(),
             mesh,
             shader,
         }
@@ -77,7 +75,7 @@ impl<'a> Game<'a> {
         let temp_sin = self.temp.sin();
         self.transform.set_translation((temp_sin, 0.0, 5.0));
         self.transform.set_rotation((0.0, temp_sin * 180.0, 0.0));
-        //self.transform
+        // self.transform
         //    .set_scale((0.5,0.5,0.5));
     }
 

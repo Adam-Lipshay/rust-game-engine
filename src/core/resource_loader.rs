@@ -15,44 +15,39 @@ pub fn load_shader(file_name: &str) -> String {
     }
 }
 
-pub fn load_mesh<'a>(file_name: &str, gl: &'a glow::Context) -> Mesh<'a> {
+pub fn load_mesh<'a>(file_name: &str, gl: &'a glow::Context) -> Result<Mesh<'a>, String> {
     let path = format!("./res/models/{}", file_name);
-    if file_name.split(".").last().unwrap() != "obj" {
-        panic!(
+    if file_name.split('.').last() != Some("obj") {
+        return Err(format!(
             "Unsupported format: {}",
-            file_name.split(".").last().unwrap()
-        );
+            file_name.split('.').last().unwrap_or("")
+        ));
     }
 
-    let obj = match read_to_string(path) {
-        Ok(obj) => obj,
-        Err(err) => {
-            panic!("Failed to load obj: {}", err)
-        }
-    };
+    let obj = read_to_string(&path).map_err(|err| format!("Failed to load obj: {}", err))?;
 
     let mut vertices: Vec<Vertex> = vec![];
-    for vertice_line in obj.lines().filter(|c| c.chars().nth(0).unwrap() == 'v') {
-        let tokens: Vec<&str> = vertice_line.split(" ").collect();
+    for vertice_line in obj.lines().filter(|c| c.starts_with('v')) {
+        let tokens: Vec<&str> = vertice_line.split_whitespace().collect();
         vertices.push(Vertex::new(Vector3f::new(
-            tokens[1].parse().unwrap(),
-            tokens[2].parse().unwrap(),
-            tokens[3].parse().unwrap(),
-        )))
+            tokens[1].parse().map_err(|_| "Failed to parse vertex x")?,
+            tokens[2].parse().map_err(|_| "Failed to parse vertex y")?,
+            tokens[3].parse().map_err(|_| "Failed to parse vertex z")?,
+        )));
     }
 
     let mut indices: Vec<i32> = vec![];
-    for index_line in obj.lines().filter(|c| c.chars().nth(0).unwrap() == 'f') {
-        let tokens: Vec<&str> = index_line.split(" ").collect();
+    for index_line in obj.lines().filter(|c| c.starts_with('f')) {
+        let tokens: Vec<&str> = index_line.split_whitespace().collect();
         indices.extend([
-            tokens[1].parse::<i32>().unwrap() - 1,
-            tokens[2].parse::<i32>().unwrap() - 1,
-            tokens[3].parse::<i32>().unwrap() - 1,
+            tokens[1].parse::<i32>().map_err(|_| "Failed to parse index 1")? - 1,
+            tokens[2].parse::<i32>().map_err(|_| "Failed to parse index 2")? - 1,
+            tokens[3].parse::<i32>().map_err(|_| "Failed to parse index 3")? - 1,
         ]);
     }
 
     let mut mesh = Mesh::new(gl);
     mesh.add_vertices(vertices, indices);
 
-    mesh
+    Ok(mesh)
 }
