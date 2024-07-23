@@ -2,10 +2,12 @@ use crate::core;
 use sdl2::{keyboard::Scancode, mouse::MouseButton};
 
 use super::{
+    camera::Camera,
     mesh, resource_loader,
     shader::{self, SetUniforms},
     time,
     transform::{self, TransformationSetters},
+    vector3f,
 };
 
 pub struct Game<'a> {
@@ -40,6 +42,13 @@ impl<'a> Game<'a> {
         shader.compile_shader();
 
         shader.add_uniform("transform");
+
+        let cam = Camera::new(
+            vector3f::Vector3f::new(0.0, 0.0, 0.0),
+            vector3f::Vector3f::new(0.0, 0.0, 1.0),
+            vector3f::Vector3f::new(0.0, 1.0, 0.0),
+        );
+
         Game {
             gl,
             temp: 0.0,
@@ -73,9 +82,9 @@ impl<'a> Game<'a> {
     pub fn update(&mut self, time: &time::Time) {
         self.temp += time.get_delta() as f32;
         let temp_sin = self.temp.sin();
-        self.transform.set_translation((temp_sin, 0.0, 5.0));
+        self.transform.set_translation((0.0, 0.0, 5.0));
         self.transform.set_rotation((0.0, temp_sin * 180.0, 0.0));
-        // self.transform
+        //self.transform
         //    .set_scale((0.5,0.5,0.5));
     }
 

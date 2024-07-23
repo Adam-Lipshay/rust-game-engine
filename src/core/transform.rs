@@ -8,6 +8,34 @@ static mut HEIGHT: f32 = INIT_HEIGHT as f32;
 static mut Z_NEAR: f32 = 0.1;
 static mut Z_FAR: f32 = 1000.0;
 
+pub unsafe fn set_projection(fov: f32, width: f32, height: f32, z_near: f32, z_far: f32) {
+    FOV = fov;
+    WIDTH = width;
+    HEIGHT = height;
+    Z_NEAR = z_near;
+    Z_FAR = z_far;
+}
+
+pub unsafe fn get_fov() -> f32 {
+    FOV
+}
+
+pub unsafe fn get_width() -> f32 {
+    WIDTH
+}
+
+pub unsafe fn get_height() -> f32 {
+    HEIGHT
+}
+
+pub unsafe fn get_z_near() -> f32 {
+    Z_NEAR
+}
+
+pub unsafe fn get_z_far() -> f32 {
+    Z_FAR
+}
+
 pub struct Transform {
     translation: Vector3f,
     rotation: Vector3f,
@@ -61,34 +89,6 @@ impl Transform {
         }
 
         projection_matrix.mul(self.get_transformation())
-    }
-
-    pub unsafe fn set_projection(fov: f32, width: f32, height: f32, z_near: f32, z_far: f32) {
-        FOV = fov;
-        WIDTH = width;
-        HEIGHT = height;
-        Z_NEAR = z_near;
-        Z_FAR = z_far;
-    }
-
-    pub unsafe fn get_fov(&self) -> f32 {
-        FOV
-    }
-
-    pub unsafe fn get_width(&self) -> f32 {
-        WIDTH
-    }
-
-    pub unsafe fn get_height(&self) -> f32 {
-        HEIGHT
-    }
-
-    pub unsafe fn get_z_near(&self) -> f32 {
-        Z_NEAR
-    }
-
-    pub unsafe fn get_z_far(&self) -> f32 {
-        Z_FAR
     }
 }
 

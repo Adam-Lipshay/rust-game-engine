@@ -1,7 +1,10 @@
+use glow::HasContext;
 use sdl2::{
     video::{GLContext, GLProfile},
     Sdl,
 };
+
+use super::transform;
 
 pub struct Window {
     video_subsystem: sdl2::VideoSubsystem,
@@ -32,7 +35,12 @@ impl Window {
             .unwrap();
 
         if fullscreen {
-            window.set_fullscreen(sdl2::video::FullscreenType::True);
+            match window.set_fullscreen(sdl2::video::FullscreenType::True) {
+                Ok(_) => {}
+                Err(err) => {
+                    panic!("Failed to set fullscreen: {}", err)
+                }
+            };
         }
 
         let _gl_context = window.gl_create_context().unwrap();
@@ -69,11 +77,51 @@ impl Window {
         self.window.title()
     }
 
-    pub fn set_width(&mut self, width: u32) {
-        self.window.set_size(width, self.get_height());
+    pub fn set_width(&mut self, width: u32, gl: &glow::Context) {
+        match self.window.set_size(width, self.get_height()) {
+            Ok(_) => {}
+            Err(err) => panic!("Failed to change height: {}", err),
+        };
+
+        unsafe {
+            gl.viewport(0, 0, width as i32, self.get_height() as i32);
+            transform::set_projection(
+                transform::get_fov(),
+                width as f32,
+                transform::get_height(),
+                transform::get_z_near(),
+                transform::get_z_far(),
+            );
+        }
     }
 
-    pub fn set_height(&mut self, height: u32) {
-        self.window.set_size(self.get_height(), height);
+    pub fn set_height(&mut self, height: u32, gl: &glow::Context) {
+        match self.window.set_size(self.get_width(), height) {
+            Ok(_) => {}
+            Err(err) => panic!("Failed to change height: {}", err),
+        };
+
+        unsafe {
+            gl.viewport(0, 0, self.get_width() as i32, height as i32);
+            transform::set_projection(
+                transform::get_fov(),
+                transform::get_width(),
+                height as f32,
+                transform::get_z_near(),
+                transform::get_z_far(),
+            );
+        }
+    }
+
+    pub fn set_fullscreen(&mut self) {
+        match self
+            .window
+            .set_fullscreen(sdl2::video::FullscreenType::True)
+        {
+            Ok(_) => {}
+            Err(err) => {
+                panic!("Failed to set fullscreen: {}", err)
+            }
+        };
     }
 }

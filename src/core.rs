@@ -1,6 +1,7 @@
 pub mod engine;
 pub mod window;
 
+mod camera;
 mod events;
 mod game;
 mod input;

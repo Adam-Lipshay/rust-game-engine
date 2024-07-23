@@ -40,10 +40,54 @@ pub fn load_mesh<'a>(file_name: &str, gl: &'a glow::Context) -> Result<Mesh<'a>,
     for index_line in obj.lines().filter(|c| c.starts_with('f')) {
         let tokens: Vec<&str> = index_line.split_whitespace().collect();
         indices.extend([
-            tokens[1].parse::<i32>().map_err(|_| "Failed to parse index 1")? - 1,
-            tokens[2].parse::<i32>().map_err(|_| "Failed to parse index 2")? - 1,
-            tokens[3].parse::<i32>().map_err(|_| "Failed to parse index 3")? - 1,
+            tokens[1]
+                .split('/')
+                .next()
+                .ok_or("Missing index 1")?
+                .parse::<i32>()
+                .map_err(|_| "Failed to parse index 1")?
+                - 1,
+            tokens[2]
+                .split('/')
+                .next()
+                .ok_or("Missing index 2")?
+                .parse::<i32>()
+                .map_err(|_| "Failed to parse index 2")?
+                - 1,
+            tokens[3]
+                .split('/')
+                .next()
+                .ok_or("Missing index 3")?
+                .parse::<i32>()
+                .map_err(|_| "Failed to parse index 3")?
+                - 1,
         ]);
+
+        if tokens.len() > 4 {
+            indices.extend([
+                tokens[1]
+                    .split('/')
+                    .next()
+                    .ok_or("Missing index 1")?
+                    .parse::<i32>()
+                    .map_err(|_| "Failed to parse index 1")?
+                    - 1,
+                tokens[3]
+                    .split('/')
+                    .next()
+                    .ok_or("Missing index 2")?
+                    .parse::<i32>()
+                    .map_err(|_| "Failed to parse index 2")?
+                    - 1,
+                tokens[4]
+                    .split('/')
+                    .next()
+                    .ok_or("Missing index 3")?
+                    .parse::<i32>()
+                    .map_err(|_| "Failed to parse index 3")?
+                    - 1,
+            ]);
+        }
     }
 
     let mut mesh = Mesh::new(gl);

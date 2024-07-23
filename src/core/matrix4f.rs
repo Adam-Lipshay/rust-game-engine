@@ -1,6 +1,6 @@
 use zerocopy::AsBytes;
 
-#[derive(Copy, Clone, AsBytes)]
+#[derive(Copy, Clone, AsBytes, Debug)]
 #[repr(C)]
 pub struct Matrix4f {
     m: [[f32; 4]; 4],
