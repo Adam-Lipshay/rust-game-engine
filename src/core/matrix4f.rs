@@ -1,5 +1,7 @@
 use zerocopy::AsBytes;
 
+use super::vector3f::Vector3f;
+
 #[derive(Copy, Clone, AsBytes, Debug)]
 #[repr(C)]
 pub struct Matrix4f {
@@ -96,6 +98,33 @@ impl Matrix4f {
         self.m[3][2] = 1.0;
 
         self
+    }
+
+    pub fn init_camera(&mut self, forward: Vector3f, up: Vector3f) {
+        let mut f = forward;
+        let mut r = up;
+        f.normalize();
+        r.normalize();
+
+        r = r.cross(forward);
+
+        let u = f.cross(r);
+
+        self.m = [[0.0; 4]; 4];
+
+        self.m[0][0] = r.get_x();
+        self.m[0][1] = r.get_y();
+        self.m[0][2] = r.get_z();
+
+        self.m[1][0] = u.get_x();
+        self.m[1][1] = u.get_y();
+        self.m[1][2] = u.get_z();
+
+        self.m[2][0] = f.get_x();
+        self.m[2][1] = f.get_y();
+        self.m[2][2] = f.get_z();
+
+        self.m[3][3] = 1.0;
     }
 
     pub fn mul(&self, r: Matrix4f) -> Matrix4f {

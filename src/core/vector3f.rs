@@ -1,5 +1,7 @@
 use zerocopy::AsBytes;
 
+use super::quaternion::{Math as QuaternionMath, Quaternion};
+
 #[derive(Copy, Clone, AsBytes, Debug)]
 #[repr(C)]
 pub struct Vector3f {
@@ -11,6 +13,27 @@ pub struct Vector3f {
 impl Vector3f {
     pub fn new(x: f32, y: f32, z: f32) -> Vector3f {
         Vector3f { x, y, z }
+    }
+
+    pub fn rotate(&mut self, angle: f32, axis: Vector3f) {
+        let half_angle_rads = (angle / 2.0).to_radians();
+
+        let sin_half_angle = half_angle_rads.sin();
+        let cos_half_angle = half_angle_rads.cos();
+
+        let rx = axis.get_x() * sin_half_angle;
+        let ry = axis.get_y() * sin_half_angle;
+        let rz = axis.get_z() * sin_half_angle;
+        let rw = cos_half_angle;
+
+        let rotation = Quaternion::new(rx, ry, rz, rw);
+        let conjucate = rotation.conjucate();
+
+        let w = rotation.mul(*self).mul(conjucate);
+
+        self.x = w.get_x();
+        self.y = w.get_y();
+        self.z = w.get_z();
     }
 
     pub fn to_string(&self) -> String {

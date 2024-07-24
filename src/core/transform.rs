@@ -1,6 +1,6 @@
 use crate::{INIT_HEIGHT, INIT_WIDTH};
 
-use super::{matrix4f::Matrix4f, vector3f::Vector3f};
+use super::{camera::Camera, matrix4f::Matrix4f, vector3f::Vector3f};
 
 static mut FOV: f32 = 70.0;
 static mut WIDTH: f32 = INIT_WIDTH as f32;
@@ -82,13 +82,32 @@ impl Transform {
         translation_matrix.mul(rotation_matrix.mul(scale_matrix))
     }
 
-    pub fn get_projection_transformation(&self) -> Matrix4f {
+    pub fn get_projection_transformation(&self, camera: Option<&Camera>) -> Matrix4f {
         let mut projection_matrix = Matrix4f::new();
+        let mut camera_rotation = Matrix4f::new();
+        let mut camera_translation = Matrix4f::new();
+
+        match camera {
+            Some(camera) => {
+                camera_rotation.init_camera(camera.get_forward(), camera.get_up());
+                camera_translation.init_translation(
+                    -camera.get_pos().get_x(),
+                    -camera.get_pos().get_y(),
+                    -camera.get_pos().get_z(),
+                );
+            }
+            None => {
+                camera_rotation.init_identity();
+                camera_translation.init_identity();
+            }
+        };
+
         unsafe {
             projection_matrix.init_projection(FOV, WIDTH, HEIGHT, Z_NEAR, Z_FAR);
         }
 
-        projection_matrix.mul(self.get_transformation())
+        projection_matrix
+            .mul(camera_rotation.mul(camera_translation.mul(self.get_transformation())))
     }
 }
 

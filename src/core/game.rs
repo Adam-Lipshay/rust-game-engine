@@ -1,5 +1,5 @@
 use crate::core;
-use sdl2::{keyboard::Scancode, mouse::MouseButton};
+//use sdl2::{keyboard::Scancode, mouse::MouseButton};
 
 use super::{
     camera::Camera,
@@ -7,11 +7,11 @@ use super::{
     shader::{self, SetUniforms},
     time,
     transform::{self, TransformationSetters},
-    vector3f,
 };
 
 pub struct Game<'a> {
     gl: &'a glow::Context,
+    camera: Camera,
     temp: f32,
     transform: transform::Transform,
     mesh: mesh::Mesh<'a>,
@@ -43,14 +43,11 @@ impl<'a> Game<'a> {
 
         shader.add_uniform("transform");
 
-        let cam = Camera::new(
-            vector3f::Vector3f::new(0.0, 0.0, 0.0),
-            vector3f::Vector3f::new(0.0, 0.0, 1.0),
-            vector3f::Vector3f::new(0.0, 1.0, 0.0),
-        );
+        let camera = Camera::default();
 
         Game {
             gl,
+            camera,
             temp: 0.0,
             transform: transform::Transform::new(),
             mesh,
@@ -59,24 +56,26 @@ impl<'a> Game<'a> {
     }
 
     pub fn input(&mut self, input: &mut core::input::Input) {
-        if input.get_key_down(Scancode::W) {
-            println!("W pressed down");
-        }
+        // if input.get_key_down(Scancode::W) {
+        //     println!("W pressed down");
+        // }
 
-        if input.get_key_up(Scancode::W) {
-            println!("W released");
-        }
+        // if input.get_key_up(Scancode::W) {
+        //     println!("W released");
+        // }
 
-        if input.get_mouse_button_down(MouseButton::Left) {
-            println!("Left clicked at {}", input.get_mouse_position().to_string());
-        }
+        // if input.get_mouse_button_down(MouseButton::Left) {
+        //     println!("Left clicked at {}", input.get_mouse_position().to_string());
+        // }
 
-        if input.get_mouse_button_up(MouseButton::Left) {
-            println!(
-                "Released left click at {}",
-                input.get_mouse_position().to_string()
-            );
-        }
+        // if input.get_mouse_button_up(MouseButton::Left) {
+        //     println!(
+        //         "Released left click at {}",
+        //         input.get_mouse_position().to_string()
+        //     );
+        //
+
+        self.camera.input(input);
     }
 
     pub fn update(&mut self, time: &time::Time) {
@@ -90,8 +89,11 @@ impl<'a> Game<'a> {
 
     pub fn render(&mut self) {
         self.shader.bind();
-        self.shader
-            .set_uniform("transform", self.transform.get_projection_transformation());
+        self.shader.set_uniform(
+            "transform",
+            self.transform
+                .get_projection_transformation(Some(&self.camera)),
+        );
         self.mesh.draw();
     }
 }
